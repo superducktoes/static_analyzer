@@ -1,17 +1,22 @@
 import pefile
 import sys
 
-# fileName = "/home/pi/malware_ma/samples/" + str(sys.argv[1])
 fileName = str(sys.argv[1])
 vb_compiled = False
+unexpected_section_names_found = False
 
 # final score tallied to determine if the indicators show it to be malware
 malware_score = 0
 
+# used to find unusual section names
+expected_section_names = [".text", ".bss", ".rdata", ".data", ".rsrc", ".edata", ".idata", ".pdata", ".debug"]
+
 # create a list of suspicious imports to search for
 # empty dictionary created now to populate at the end
 suspicious_imports_found = {}
-suspicious_imports = ["URLDownloadToFileA", "ShellExecuteA", "CreateThread", "FindFirstFileA", "GetProcAddress", "LoadLibraryA"]
+
+suspicious_imports = ["URLDownloadToFileA", "ShellExecuteA", "CreateThread", "FindFirstFileA", "LoadLibraryA", "RegDeleteKeyW","GetProcAddress", "ExitProcess", "GetModuleFileNameA"]
+
 suspicious_imports_counter = 0
 
 for i in suspicious_imports:
@@ -30,12 +35,12 @@ print(pe.parse_data_directories())
 
 file_sections = pe.sections
 
-# decode and print out the sections
+# decode, strip,  and print out the sections
 header_counter = 0
 section_names = []
 for i in file_sections:
     print(i)
-    section_names.append(str(i.Name.decode('utf-8')))
+    section_names.append(str(i.Name.decode('utf-8').split("\x00")[0]))
     header_counter = header_counter + 1
 
 file_imports = {}
@@ -73,19 +78,15 @@ print("\nDllCharacteristics: " + str(pe.OPTIONAL_HEADER.DllCharacteristics))
 print("\nSizeOfInitializedData: " + str(pe.OPTIONAL_HEADER.SizeOfInitializedData))
 print("\nSuspicious Imports Found: " + str(suspicious_imports_found))
 print("\nSection Names: " + str(section_names))
-print("\nImports: " + str(file_imports))
 
-'''
-if not vb_compiled:
-    if(header_counter < 9 or
-       (pe.OPTIONAL_HEADER.MajorImageVersion < 1 and
-        pe.OPTIONAL_HEADER.CheckSum < 1 and
-        pe.OPTIONAL_HEADER.MajorImageVersion < 1)):
-        print("\n\n probably malware \n")
-    else:
-        print("\n\n probably not malware \n\n")
-'''
-# these two things have nothing to do with each other right now...
+# check to see if any of the section names are outside of what's expected
+print("\nPossible Unusual Sections: ")
+for i in section_names:
+    if i not in expected_section_names:
+        print(i)
+        unexpected_section_names_found = True
+        
+print("\nImports: " + str(file_imports))
 
 if not vb_compiled:
     if(header_counter <= 9):
@@ -99,6 +100,8 @@ if not vb_compiled:
     if(pe.OPTIONAL_HEADER.SizeOfInitializedData < 1):
         malware_score = malware_score + 1
     if(suspicious_imports_counter >= 3):
+        malware_score = malware_score + 1
+    if(unexpected_section_names_found):
         malware_score = malware_score + 1
         
     print("Malware score: " + str(malware_score))
