@@ -1,9 +1,12 @@
 import pefile
 import sys
+import os
+from datetime import datetime
 
 fileName = str(sys.argv[1])
 vb_compiled = False
 unexpected_section_names_found = False
+file_size = os.path.getsize(fileName)
 
 # final score tallied to determine if the indicators show it to be malware
 malware_score = 0
@@ -24,6 +27,8 @@ for i in suspicious_imports:
 
 print(fileName)
 
+# start the timer
+start_time = datetime.now()
 # create the new pefile object
 pe = pefile.PE(fileName)
 
@@ -66,11 +71,14 @@ for entry in pe.DIRECTORY_ENTRY_IMPORT:
                 suspicious_imports_counter = suspicious_imports_counter + 1
                 
         file_imports[str(entry.dll.decode('utf-8'))] = str(api_list)
-    
+
+end_time = datetime.now() - start_time
+
 print("========== + REPORT + ==========")
 if vb_compiled:
     print("Note -> Written and compiled with VB. This may throw things off.")
 
+print("\nFile analyzed in " + str(end_time))
 print("\nTotal Section Headers: " + str(header_counter))
 print("\nMajorImageVersion: " + str(pe.OPTIONAL_HEADER.MajorImageVersion))
 print("\nCheckSum: " + str(pe.OPTIONAL_HEADER.CheckSum))
@@ -78,7 +86,7 @@ print("\nDllCharacteristics: " + str(pe.OPTIONAL_HEADER.DllCharacteristics))
 print("\nSizeOfInitializedData: " + str(pe.OPTIONAL_HEADER.SizeOfInitializedData))
 print("\nSuspicious Imports Found: " + str(suspicious_imports_found))
 print("\nSection Names: " + str(section_names))
-
+print("\nSize of File: " + str(file_size))
 # check to see if any of the section names are outside of what's expected
 print("\nPossible Unusual Sections: ")
 for i in section_names:
@@ -99,7 +107,7 @@ if not vb_compiled:
         malware_score = malware_score + 1
     if(pe.OPTIONAL_HEADER.SizeOfInitializedData < 1):
         malware_score = malware_score + 1
-    if(suspicious_imports_counter >= 3):
+    if(suspicious_imports_counter > 5):
         malware_score = malware_score + 1
     if(unexpected_section_names_found):
         malware_score = malware_score + 1
