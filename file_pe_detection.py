@@ -1,6 +1,9 @@
+
 import pefile
 import sys
 import os
+import re
+import codecs
 from datetime import datetime
 
 fileName = str(sys.argv[1])
@@ -72,6 +75,17 @@ for entry in pe.DIRECTORY_ENTRY_IMPORT:
                 
         file_imports[str(entry.dll.decode('utf-8'))] = str(api_list)
 
+
+# open the actual file to search for some specific strings
+'''file = open(fileName, "r")
+for line in file:
+    if re.search("Sleep", str(line)):
+        print(line)'''
+with codecs.open(fileName, "r", encoding="utf-8", errors="ignore") as fdata:
+    for line in fdata:
+        if re.search("Sleep", line):
+            print("found sleep")
+
 end_time = datetime.now() - start_time
 
 print("========== + REPORT + ==========")
@@ -110,6 +124,9 @@ if not vb_compiled:
     if(suspicious_imports_counter > 5):
         malware_score = malware_score + 1
     if(unexpected_section_names_found):
+        malware_score = malware_score + 1
+    # if detected to be packed    
+    if('UPX0' or 'UPX1' in section_names):
         malware_score = malware_score + 1
         
     print("Malware score: " + str(malware_score))
