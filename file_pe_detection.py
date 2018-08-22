@@ -1,4 +1,3 @@
-
 import pefile
 import sys
 import os
@@ -10,6 +9,8 @@ fileName = str(sys.argv[1])
 vb_compiled = False
 unexpected_section_names_found = False
 file_size = os.path.getsize(fileName)
+# list used to output to ml classifier
+list_for_ml = []
 
 # final score tallied to determine if the indicators show it to be malware
 malware_score = 0
@@ -77,14 +78,14 @@ for entry in pe.DIRECTORY_ENTRY_IMPORT:
 
 
 # open the actual file to search for some specific strings
-'''file = open(fileName, "r")
-for line in file:
-    if re.search("Sleep", str(line)):
-        print(line)'''
 with codecs.open(fileName, "r", encoding="utf-8", errors="ignore") as fdata:
     for line in fdata:
         if re.search("Sleep", line):
             print("found sleep")
+        if re.search("GetKeyboardState", line):
+            print("found getkeyboardstate")
+        if re.search("OpenSCManager", line):
+            print("found openscmanager")
 
 end_time = datetime.now() - start_time
 
@@ -134,3 +135,11 @@ if not vb_compiled:
         print("\n\n probably malware")
     else:
         print("\n\n probably not malware")
+
+list_for_ml.append(pe.OPTIONAL_HEADER.SizeOfInitializedData)
+list_for_ml.append(header_counter)
+list_for_ml.append(pe.OPTIONAL_HEADER.DllCharacteristics)
+list_for_ml.append(pe.OPTIONAL_HEADER.MajorImageVersion)
+list_for_ml.append(pe.OPTIONAL_HEADER.CheckSum)
+
+print(list_for_ml)
