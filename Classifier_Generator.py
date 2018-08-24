@@ -55,7 +55,7 @@ class Classifier_Generator:
 
     def add_new_feature_label(self, feature_list, label):
         with open(self.path_to_features, "a") as file:
-            file.write(str(feature_list))
+            file.write("\n" + str(feature_list))
 
         with open(self.path_to_labels, "a") as file:
-            file.write(str(label))
+            file.write("\n" + str(label))
