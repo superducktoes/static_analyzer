@@ -1,4 +1,6 @@
 from Static_Analyzer import PE_Analyzer
+from Classifier_Generator import Classifier_Generator
+
 import sys
 
 if __name__ == "__main__":
@@ -15,5 +17,14 @@ if __name__ == "__main__":
         print(file_to_analyze.get_unusual_section_names())
         print(file_to_analyze.get_suspicious_imports())
         print(file_to_analyze.get_compile_type())
+        print("\n\n\n\n ++++ Testing Updating the classifier ++++ \n\n\n")
+
+        new_generator = Classifier_Generator()
+        new_generator.load_features_labels()
+        print(new_generator.get_classifier_features())
+        print(new_generator.get_classifier_labels())
+        new_generator.generate_save_classifier()
+        new_generator.add_new_feature_label(file_to_analyze.get_ml_output(), 1)
+        
     else:
         print("Usage: python3 main.py /path/to/malicious/file.exe")
