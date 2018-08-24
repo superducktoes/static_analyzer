@@ -11,34 +11,33 @@ class Classifier_Generator:
         # empty list to populate with labels
         # 1 is for malware 0 is good
         self.labels = []
+
     def load_features_labels(self):
         
         # populate a list from the file
-        with open(self.path_to_features) as file:
-            for line in file:
-                # this might be a little ugly. Since the
-                # file reads in as a string we need to drop
-                # the brackets and split on the commas
-                line = line[1:]
-                line = line[:len(line)-2]
-                line = line.split(",")
+        with open(self.path_to_features, "r") as fp:
+            line = fp.readline()
+
+            while line:
                 inner_list = []
-                
-                for i in line:
-                    # the point of this is to drop the
-                    # space in front of the comma if its
-                    # there
-                    if i != ",":
-                        inner_list.append(float(i))
-                    elif i != "," and " " in i:
-                        inner_list.append(float(i[1:]))
-                    # add the list to the main list
+                stripped_line = line.strip()
+                stripped_line = stripped_line[1:]
+                stripped_line = stripped_line[:len(stripped_line)-1]
+                stripped_line = stripped_line.split(",")
+                #print(stripped_line)
+                for i in stripped_line:
+                    i = i.strip()
+                    inner_list.append(float(i))
+                #print(inner_list)
                 self.features.append(inner_list)
-
-        with open(self.path_to_labels) as file:
-            for line in file:
+                line = fp.readline()
+        print(self.features)
+        with open(self.path_to_labels) as fp:
+            line = fp.readline()
+            while line:
                 self.labels.append(int(line))
-
+                line = fp.readline()
+        print(self.labels)
     def get_classifier_features(self):
         return self.features
 
@@ -54,8 +53,24 @@ class Classifier_Generator:
 
 
     def add_new_feature_label(self, feature_list, label):
-        with open(self.path_to_features, "a") as file:
-            file.write("\n" + str(feature_list))
+        if feature_list is not None:
+            hs = open(self.path_to_features, "a")
+            hs.write("\n")
+            hs.write(str(feature_list))
+            hs.close()
 
-        with open(self.path_to_labels, "a") as file:
-            file.write("\n" + str(label))
+            hs = open(self.path_to_labels, "a")
+            hs.write("\n")
+            hs.write(str(label))
+            hs.close()
+            '''        
+            with open(self.path_to_features, "a") as file:
+            file.write('\n')
+            file.write(str(feature_list))
+            file.closed
+            
+            with open(self.path_to_labels, "a") as file:
+            file.write(str(label))
+            file.closed
+            '''
+            
