@@ -33,8 +33,10 @@ Not adding to classifier data
 <br>
 Testing Stats:
 <br>
-clean files - 80%
+Malicious Files: 11/11
 <br>
-malicious files - 82%
+Clean Files: 7/8
 <br>
-files marked as evasive on h-a: 28%
+Files marked as evasive on h-a: 4/7
+<br>
+Total Accuracy: 85%
