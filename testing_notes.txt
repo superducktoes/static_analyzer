@@ -32,5 +32,5 @@ ea9efaf8127ecda970e03b53089e548f3b0da0a557c5e851eab6c5c6937e23ac.bin - YES - YES
 de89759f1738b88a7d082308999b74379f285614524c0062e909cabd9fa0b139.bin - YES - YES - [4096, 3, 0, 0, 0]
 
 4/5 on clean - 80%
-9/11 on malicious - 82%
+12/14 on malicious - 85%
 2/7 on evasive - 28%
