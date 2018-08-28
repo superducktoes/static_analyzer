@@ -89,7 +89,7 @@ class PE_Analyzer:
         return unusual_section_names
 
     def get_suspicious_imports(self):
-        suspicious_imports = ["URLDownloadToFileA", "ShellExecuteA", "CreateThread", "FindFirstFileA", "LoadLibraryA", "RegDeleteKeyW","GetProcAddress", "ExitProcess", "GetModuleFileNameA"]
+        suspicious_imports = ["URLDownloadToFileA", "ShellExecuteA", "CreateThread", "FindFirstFileA", "LoadLibraryA", "RegDeleteKeyW","GetProcAddress", "ExitProcess", "GetModuleFileNameA", "WriteConsoleW"]
         file_suspicious_imports = []
         
         # this is a little ugly but take each element of the suspicious_imports list and search our
