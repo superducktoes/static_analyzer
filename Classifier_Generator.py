@@ -1,6 +1,7 @@
-from sklearn import tree
+#from sklearn import tree
 #from sklearn.neighbors import KNeighborsClassifier
-#from sklearn import svm
+from sklearn import svm
+
 import pickle
 
 class Classifier_Generator:
@@ -47,9 +48,9 @@ class Classifier_Generator:
         return self.labels
 
     def generate_save_classifier(self):
-        clf = tree.DecisionTreeClassifier()
+        #clf = tree.DecisionTreeClassifier()
         #clf = KNeighborsClassifier(n_neighbors=5)
-        #clf = svm.SVC()
+        clf = svm.SVC()
         clf = clf.fit(self.features,self.labels)
         
         with open('./classifier_data/dumped_classifier.pkl', 'wb') as fid:

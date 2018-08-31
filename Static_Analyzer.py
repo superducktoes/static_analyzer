@@ -18,7 +18,8 @@ class PE_Analyzer:
         # dictionary to store the DLL and then a list of functions imported
         self.file_libraries_imported = {}
         self.file_search_strings = {}
-
+        self.unusual_section_counter = 0
+        self.unusual_section_names = []
         # used to generate the output for our classifier
         self.ml_data = []
         
@@ -33,10 +34,17 @@ class PE_Analyzer:
 
         # populate a list of the file section names
         file_sections = pe.sections
+
+        # this needs to be cleaned up and moved to a separate function
+        expected_section_names = [".text", ".bss", ".rdata", ".data", ".rsrc", ".edata", ".idata", ".pdata", ".debug"]
         for i in file_sections:
             self.file_section_names.append(str(i.Name.decode("utf-8").split("\x00")[0]))
             self.section_counter = self.section_counter + 1
-
+        for i in self.file_section_names:
+            if i not in expected_section_names:
+                self.unusual_section_names.append(i)
+                self.unusual_section_counter = self.unusual_section_counter + 1
+                
         # create a dictionary with the key of the library and the values a list of functions imported
         for entry in pe.DIRECTORY_ENTRY_IMPORT:
             # get the name of the library
@@ -71,22 +79,17 @@ class PE_Analyzer:
     # take our pe object and pass to internal function to generate list for classifier
     # moved to a separte function incase there are other items to add to the data
     def _generate_ml_output(self, pe):
+        
         self.ml_data.append(pe.OPTIONAL_HEADER.SizeOfInitializedData)
         self.ml_data.append(self.section_counter)
+        self.ml_data.append(self.unusual_section_counter)
         self.ml_data.append(pe.OPTIONAL_HEADER.DllCharacteristics)
         self.ml_data.append(pe.OPTIONAL_HEADER.MajorImageVersion)
         self.ml_data.append(pe.OPTIONAL_HEADER.CheckSum)
-
+        
 
     def get_unusual_section_names(self):
-        expected_section_names = [".text", ".bss", ".rdata", ".data", ".rsrc", ".edata", ".idata", ".pdata", ".debug"]
-        unusual_section_names = []
-
-        for i in self.file_section_names:
-            if i not in expected_section_names:
-                unusual_section_names.append(i)
-
-        return unusual_section_names
+        return self.unusual_section_names, self.unusual_section_counter
 
     def get_suspicious_imports(self):
         suspicious_imports = ["URLDownloadToFileA", "ShellExecuteA", "CreateThread", "FindFirstFileA", "LoadLibraryA", "RegDeleteKeyW","GetProcAddress", "ExitProcess", "GetModuleFileNameA", "WriteConsoleW"]

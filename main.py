@@ -49,10 +49,9 @@ if __name__ == "__main__":
 
         if int(choice) == 1:
             file_status = analyze_file(file_to_analyze)
-
+            
             print(file_status)
             print("Suspicious Imports: " + str(file_to_analyze.get_suspicious_imports()))
-            print("Unusual Section Names: " + str(file_to_analyze.get_unusual_section_names()))
             print("Do you want to add the analysis to the classifier? ")
             choice = input("Y or N: ")
             if choice.upper() == "Y":
