@@ -31,12 +31,4 @@ Y or N: n
 Not adding to classifier data
 <hr>
 <br>
-Testing Stats:
-<br>
-Malicious Files: 11/11
-<br>
-Clean Files: 7/8
-<br>
-Files marked as evasive on h-a: 4/7
-<br>
-Total Accuracy: 85%
+Starting to see decent results when testing files. Classifier built with 90 malicious samples and 78 clean samples.
