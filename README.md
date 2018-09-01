@@ -32,3 +32,7 @@ Not adding to classifier data
 <hr>
 <br>
 Starting to see decent results when testing files. Classifier built with 90 malicious samples and 78 clean samples.
+<br>
+pi@raspberrypi:~/malware_ma $ python3 testing_classifier.py
+<br>
+Test score: 88.89 %
