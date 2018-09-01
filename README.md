@@ -33,6 +33,15 @@ Not adding to classifier data
 <br>
 Starting to see decent results when testing files. Classifier built with 90 malicious samples and 78 clean samples.
 <br>
-pi@raspberrypi:~/malware_ma $ python3 testing_classifier.py
+<h2>Testing</h2>
+pi@raspberrypi:~/malware_ma $ python3 classifier_prediction_testing.py
 <br>
-Test score: 88.89 %
+Test score: 90.00 %
+<br>
+prediction:
+<br>
+[1 1 1 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 1 0]
+<br>
+actual:
+<br>
+[1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
